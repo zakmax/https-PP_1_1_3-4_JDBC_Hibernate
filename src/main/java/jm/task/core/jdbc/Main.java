@@ -1,30 +1,26 @@
 package jm.task.core.jdbc;
 
-import jm.task.core.jdbc.model.User;
-import jm.task.core.jdbc.service.UserServiceImpl;
+import jm.task.core.jdbc.dao.UserDaoHibernateImpl;
+import org.hibernate.Session;
 
-import java.util.List;
-
-import static jm.task.core.jdbc.util.Util.getConnection;
+import static jm.task.core.jdbc.util.Util.buildSessionFactory;
 
 public class Main {
     public static void main(String[] args) throws Exception {
+        UserDaoHibernateImpl userDaoHibernate  = new UserDaoHibernateImpl();
         try {
-            UserServiceImpl userDaoJDBC = new UserServiceImpl();
-            userDaoJDBC.createUsersTable();
-            userDaoJDBC.saveUser("Max", "Petrov", (byte) 30);
-            userDaoJDBC.saveUser("Dry", "Ivanov", (byte) 20);
-            userDaoJDBC.saveUser("Siy", "Sidorov", (byte) 18);
-            userDaoJDBC.saveUser("Miha", "Helov", (byte) 25);
-            List<User> allUsers = userDaoJDBC.getAllUsers();
-            allUsers.forEach(System.out::println);
-            userDaoJDBC.removeUserById(1);
-            List<User> allUsers2 = userDaoJDBC.getAllUsers();
-            allUsers2.forEach(System.out::println);
-            userDaoJDBC.cleanUsersTable();
-            userDaoJDBC.dropUsersTable();
+            Session session = buildSessionFactory().getCurrentSession();
+            userDaoHibernate.createUsersTable();
+            userDaoHibernate.saveUser("Max", "Yuha", (byte) 34);
+            userDaoHibernate.saveUser("Max2", "Yuha2", (byte) 35);
+            userDaoHibernate.saveUser("Max3", "Yuha3", (byte) 36);
+            userDaoHibernate.saveUser("Max4", "Yuha4", (byte) 37);
+            userDaoHibernate.removeUserById(1);
+             userDaoHibernate.getAllUsers();
+             userDaoHibernate.cleanUsersTable();
+             userDaoHibernate.dropUsersTable();
         } finally {
-            getConnection().close();
+            buildSessionFactory().close();
         }
     }
 }
