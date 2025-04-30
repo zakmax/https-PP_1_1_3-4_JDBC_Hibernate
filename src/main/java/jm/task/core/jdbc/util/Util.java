@@ -6,6 +6,7 @@ import org.hibernate.cfg.Configuration;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.util.Objects;
 
 public class Util {
     static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
@@ -13,8 +14,7 @@ public class Util {
     private static final String URL = "jdbc:mysql://localhost:3307/my_database";
     private static final String USERNAME = "user";
     private static final String PASSWORD = "user_password";
-
-    public static final SessionFactory sessionFactory = buildSessionFactory();
+    private static SessionFactory sessionFactory;
 
     public static Connection getConnection() throws Exception {
 
@@ -25,7 +25,15 @@ public class Util {
         return DriverManager.getConnection(URL, USERNAME, PASSWORD);
     }
 
-    public static SessionFactory buildSessionFactory() {
+    private Util() {}
+
+    public static SessionFactory getSessionFactory(){
+        if (Objects.isNull(sessionFactory)){
+            sessionFactory = buildSessionFactory();
+        }
+        return sessionFactory;
+    }
+    private static SessionFactory buildSessionFactory() {
 
         Configuration configuration = new Configuration();
         configuration.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
@@ -36,9 +44,9 @@ public class Util {
         configuration.setProperty("hibernate.hbm2ddl.auto", "update");
         configuration.setProperty("hibernate.show_sql", "true");
         configuration.setProperty("hibernate.current_session_context_class", "thread");
-        SessionFactory factory = configuration.addAnnotatedClass(User.class)
-                .buildSessionFactory();
-        return factory;
+        configuration.addAnnotatedClass(User.class);
+
+        return configuration.buildSessionFactory();
     }
 }
 
